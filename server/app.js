@@ -184,6 +184,4 @@ app.post("/api/process-doc", (req, res) => {
   res.json("Document generated successfully!");
 });
 
-app.listen(3000, () => {
-  console.log("Server is running on port 3000");
-});
+app.listen(3000 || process.env.PORT);
