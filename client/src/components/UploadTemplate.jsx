@@ -9,7 +9,7 @@ const UploadTemplate = () => {
         console.log(data);
         const formData = { name: data.name, description: data.description };
         try {
-            axios.post('http://localhost:3000/api/templates', formData).then((res) => {
+            axios.post('https://flexi-docs.onrender.com/api/templates', formData).then((res) => {
                 // console.log(res.data);
                 axios.put(res.data.uploadUrl, data.template[0], {
                     headers: {
