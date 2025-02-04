@@ -30,7 +30,7 @@ const DynamicBlock = () => {
     data.date = `${dateParts[2]}/${dateParts[1]}/${dateParts[0]}`;
     // console.log("Form Data:", data);
 
-    axios.post("http://localhost:3000/api/generate/doc-template", data)
+    axios.post("https://flexi-docs.onrender.com/api/generate/doc-template", data)
       .then((res) => {
         // console.log("File generated:", res);
         setFileUrl(res.data.fileUrl); // Assuming the response contains the URL to the generated file
