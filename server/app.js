@@ -8,13 +8,21 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 require("dotenv").config();
+app.use(cors());
+
 const fs = require("fs");
 const PizZip = require("pizzip");
 const Docxtemplater = require("docxtemplater");
 const ImageModule = require("docxtemplater-image-module-free");
 // const fetch = (await import("node-fetch")).default;
+const connectToDB = require("./config/mongodb");
+const templatesRouter = require("./routes/templates.routes");
+const generateRouter = require("./routes/generate.routes");
 
-app.use(cors());
+connectToDB()
+
+app.use("/api/templates", templatesRouter)
+app.use("/api/generate", generateRouter)
 
 app.post("/generate", (req, res) => {
   // Load the template file
@@ -89,41 +97,41 @@ app.post("/generate-block", (req, res) => {
   res.json("Table generated successfully!");
 });
 
-app.post("/generate-doc", (req, res) => {
-  const templateFile = fs.readFileSync(
-    "./templates/doc-template.docx",
-    "binary"
-  );
+// app.post("/generate-doc", (req, res) => {
+//   const templateFile = fs.readFileSync(
+//     "./templates/doc-template.docx",
+//     "binary"
+//   );
 
-  // Create a PizZip instance with the template
-  const zip = new PizZip(templateFile);
+//   // Create a PizZip instance with the template
+//   const zip = new PizZip(templateFile);
 
-  // Create Docxtemplater instance
-  const doc = new Docxtemplater(zip, {
-    paragraphLoop: true, // To support loops in paragraphs
-    linebreaks: true, // To support line breaks
-  });
+//   // Create Docxtemplater instance
+//   const doc = new Docxtemplater(zip, {
+//     paragraphLoop: true, // To support loops in paragraphs
+//     linebreaks: true, // To support line breaks
+//   });
 
-  const data = req.body;
-  console.log(data);
+//   const data = req.body;
+//   console.log(data);
 
-  // doc.setData(data);
+//   // doc.setData(data);
 
-  // Try rendering the document
-  try {
-    doc.render(data); // Replace placeholders with data
-  } catch (error) {
-    console.error("Error rendering document:", error);
-  }
+//   // Try rendering the document
+//   try {
+//     doc.render(data); // Replace placeholders with data
+//   } catch (error) {
+//     console.error("Error rendering document:", error);
+//   }
 
-  // Generate the final Word file
-  const output = doc.getZip().generate({ type: "nodebuffer" });
+//   // Generate the final Word file
+//   const output = doc.getZip().generate({ type: "nodebuffer" });
 
-  // Save the output file
-  fs.writeFileSync("./outputs/doc.docx", output);
+//   // Save the output file
+//   fs.writeFileSync("./outputs/doc.docx", output);
 
-  res.json("Table generated successfully!");
-});
+//   res.json("Table generated successfully!");
+// });
 
 app.post("/api/upload/generate-presigned-urls", async (req, res) => {
   try {
