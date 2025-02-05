@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
-import axios from "axios";
+import axios from "../utils/axios";
 
 const DynamicBlock = () => {
   const { register, control, handleSubmit, watch } = useForm({
@@ -30,7 +30,7 @@ const DynamicBlock = () => {
     data.date = `${dateParts[2]}/${dateParts[1]}/${dateParts[0]}`;
     // console.log("Form Data:", data);
 
-    axios.post("https://flexi-docs.onrender.com/api/generate/doc-template", data)
+    axios.post("/generate/doc-template", data)
       .then((res) => {
         // console.log("File generated:", res);
         setFileUrl(res.data.fileUrl); // Assuming the response contains the URL to the generated file
