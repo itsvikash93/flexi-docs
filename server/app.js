@@ -21,7 +21,7 @@ const generateRouter = require("./routes/generate.routes");
 
 connectToDB()
 app.get("/", (req, res) => { 
-  res.sendFile("FlexiDocs API is running!")
+  res.send("FlexiDocs API is running!")
 })
 app.use("/api/templates", templatesRouter)
 app.use("/api/generate", generateRouter)
