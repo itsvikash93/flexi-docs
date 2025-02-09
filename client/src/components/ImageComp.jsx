@@ -1,5 +1,5 @@
 import { useState } from "react";
-import axios from "axios";
+import axios from "../utils/axios";
 
 const ImageComp = () => {
   const [files, setFiles] = useState([]);
@@ -15,7 +15,7 @@ const ImageComp = () => {
     setLoading(true);
 
     try {
-      const { data } = await axios.post("http://localhost:3000/api/upload/generate-presigned-urls", {
+      const { data } = await axios.post("/uploads/presigned-urls", {
         files: files.map((file) => ({ name: file.name, type: file.type })),
       });
 
@@ -51,7 +51,7 @@ const ImageComp = () => {
     if (uploadedFiles.length === 0) return alert("Upload images first!");
 
     try {
-      const response = await axios.post("http://localhost:3000/api/process-doc", {
+      const response = await axios.post("/generate/image-template", {
         images: uploadedFiles, // Send all uploaded images
       });
 
