@@ -104,13 +104,14 @@ module.exports.imgGenerate = async (req, res) => {
 
 module.exports.workshopGenerate = async (req, res) => {
   try {
+    console.log(req.body);
     // Load the template file
     // const templateFile = fs.readFileSync(
     //   "./templates/workshop-template.docx",
     //   "binary"
     // );
     const template = await templateModel.findOne({
-      _id: "67a88ce89c413228bd4c7c81",
+      _id: "67ac664fb21ef9eb135ff824",
     });
 
     const response = await axios.get(template.fileUrl, {
@@ -172,21 +173,20 @@ module.exports.workshopGenerate = async (req, res) => {
       attendances: attendanceImgs, // Attendance images
     });
 
+    const output = doc.getZip().generate({ type: "nodebuffer" });
     // Generate and save the output document
     // const outputPath = "./generated/workshop.docx";
-    const output = doc.getZip().generate({ type: "nodebuffer" });
 
     const fileName = `workshop on entrepreneurship and innovation as career opportunity.docs`;
     const key = `generated/${fileName}`;
 
+    // fs.writeFileSync(outputPath, output);
+    
     const { fileUrl, uploadUrl } = await putObjectURL(
       key,
       "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
     );
 
-    // console.log({ fileUrl, uploadUrl });
-
-    // Uploading the generated file using presigned URL
     await axios.put(uploadUrl, output, {
       headers: {
         "Content-Type":
@@ -195,6 +195,7 @@ module.exports.workshopGenerate = async (req, res) => {
     });
 
     res.status(200).send({ fileUrl });
+    // res.status(200).send("generated");
   } catch (error) {
     console.error("Error processing document:", error);
     res.status(500).json({ error: "Document generation failed" });

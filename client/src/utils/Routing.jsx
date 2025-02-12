@@ -11,7 +11,7 @@ const Routing = () => {
         <Routes>
             <Route path="/" element={<Home />} />
             {/* <Route path="/" element={<ImageComp />} /> */}
-            {/* <Route path="/" element={<UploadTemplate />} /> */}
+            <Route path="/upload/template" element={<UploadTemplate />} />
             {/* <Route path="/" element={<WorkshopForm />} /> */}
             <Route path="/templates/dynamic-block" element={<DynamicBlock />} />
             <Route path="/templates/workshop" element={<WorkshopForm />} />

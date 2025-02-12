@@ -1,1 +1,9 @@
 @import "tailwindcss";
+
+.toastBody {
+  font-size: 1.1rem;
+}
+
+.toastProgress {
+  background: #ffffff !important;
+}
