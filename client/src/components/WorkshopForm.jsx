@@ -283,38 +283,66 @@ export default function WorkshopForm() {
 
 
                 {/* Key Learnings Section */}
-                <div className="space-y-4">
-                    <h2 className="text-xl font-semibold text-indigo-800 mb-4">
-                        Key Learnings
-                    </h2>
+                <div className="space-y-6 bg-white p-6 rounded-lg shadow-sm border border-purple-100">
+                    <div className="flex items-center justify-between">
+                        <h2 className="text-xl font-semibold text-indigo-800">
+                            Key Learnings
+                        </h2>
+                        <span className="text-sm text-gray-500">
+                            {fields.length} points added
+                        </span>
+                    </div>
 
-                    {fields.map((field, index) => (
-                        <div key={field.id} className="flex gap-4 items-start bg-white p-4 rounded-lg shadow-sm">
-                            <div className="flex-1">
-                                <input
-                                    {...register(`keyLearnings.${index}.learning`)}
-                                    className="mt-1 block w-full rounded-md border-purple-200 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 p-2"
-                                    placeholder="Enter key learning point"
-                                    required
-                                />
+                    <div className="space-y-4">
+                        {fields.map((field, index) => (
+                            <div key={field.id} className="flex gap-4 items-start bg-gray-50 p-4 rounded-lg border border-purple-100 hover:border-purple-200 transition-colors duration-200">
+                                <span className="text-gray-400 font-medium pt-3">
+                                    {index + 1}.
+                                </span>
+                                <div className="flex-1">
+                                    <input
+                                        {...register(`keyLearnings.${index}.learning`)}
+                                        className="mt-1 block w-full rounded-md border-purple-200 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 p-2 bg-white"
+                                        placeholder="Enter key learning point"
+                                        required
+                                    />
+                                </div>
+                                <button
+                                    type="button"
+                                    onClick={() => remove(index)}
+                                    className="mt-1 p-2 text-rose-500 hover:text-rose-700 rounded-full hover:bg-rose-50 transition duration-200"
+                                    title="Remove this point"
+                                >
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
+                                    </svg>
+                                </button>
                             </div>
-                            <button
-                                type="button"
-                                onClick={() => remove(index)}
-                                className="mt-1 px-3 py-2 text-rose-500 hover:text-rose-700 rounded-md hover:bg-rose-50 transition duration-200"
-                            >
-                                Remove
-                            </button>
-                        </div>
-                    ))}
+                        ))}
+                    </div>
 
                     <button
                         type="button"
                         onClick={() => append({ learning: "" })}
-                        className="w-full py-3 px-6 bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-md shadow-md hover:from-indigo-600 hover:to-purple-600 focus:ring focus:ring-purple-300 transition duration-200"
+                        className="w-full py-3 px-6 bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-md shadow-md hover:from-indigo-600 hover:to-purple-600 focus:ring focus:ring-purple-300 transition duration-200 flex items-center justify-center gap-2"
                     >
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
+                        </svg>
                         Add Learning Point
                     </button>
+
+                    <div>
+                        <label className="block text-sm font-medium text-indigo-700 mb-2">
+                            Conclusion
+                        </label>
+                        <textarea
+                            {...register("conclusion")}
+                            className="mt-1 block w-full rounded-md border-purple-200 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 p-2 h-24"
+                            placeholder="Summarize the key takeaways and overall impact of the workshop"
+                            required
+                        />
+                    </div>
                 </div>
 
                 {/* Additional Files Section */}
@@ -381,20 +409,22 @@ export default function WorkshopForm() {
                 >
                     Generate Workshop Report
                 </button>
-            </form>
+            </form >
 
             {/* Download Link */}
-            {fileUrl && (
-                <div className="mt-8 text-center">
-                    <a
-                        href={fileUrl}
-                        download
-                        className="py-2 px-4 bg-indigo-500 text-white rounded-md hover:bg-indigo-600 transition duration-200"
-                    >
-                        Download Generated Report
-                    </a>
-                </div>
-            )}
-        </div>
+            {
+                fileUrl && (
+                    <div className="mt-8 text-center">
+                        <a
+                            href={fileUrl}
+                            download
+                            className="py-2 px-4 bg-indigo-500 text-white rounded-md hover:bg-indigo-600 transition duration-200"
+                        >
+                            Download Generated Report
+                        </a>
+                    </div>
+                )
+            }
+        </div >
     );
 }

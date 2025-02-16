@@ -181,7 +181,7 @@ module.exports.workshopGenerate = async (req, res) => {
     const key = `generated/${fileName}`;
 
     // fs.writeFileSync(outputPath, output);
-    
+
     const { fileUrl, uploadUrl } = await putObjectURL(
       key,
       "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
