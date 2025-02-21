@@ -5,6 +5,7 @@ import DynamicBlock from '../components/DynamicBlock'
 import ImageComp from '../components/ImageComp'
 import UploadTemplate from '../components/UploadTemplate'
 import WorkshopForm from '../components/WorkshopForm'
+import IICActivityReport from '../components/IICActivityReport'
 
 const Routing = () => {
     return (
@@ -15,6 +16,7 @@ const Routing = () => {
             {/* <Route path="/" element={<WorkshopForm />} /> */}
             <Route path="/templates/dynamic-block" element={<DynamicBlock />} />
             <Route path="/templates/workshop" element={<WorkshopForm />} />
+            <Route path="/templates/iic-activity-report" element={<IICActivityReport />} />
         </Routes>
     )
 }

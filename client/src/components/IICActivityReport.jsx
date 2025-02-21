@@ -3,7 +3,7 @@ import { useState } from "react";
 import axios from "../utils/axios";
 import { toast } from "react-toastify";
 
-export default function WorkshopForm() {
+const IICActivityReport = () => {
   const { register, handleSubmit, control } = useForm();
   const { fields, append, remove } = useFieldArray({
     name: "keyLearnings",
@@ -96,6 +96,7 @@ export default function WorkshopForm() {
 
   const onSubmit = async (data) => {
     const dateParts = data.date.split("-");
+    // data.date = `${dateParts[2]}/${dateParts[1]}/${dateParts[0]}`;
     const formData = {
       ...data,
       dateAndDuration: `${dateParts[2]}-${dateParts[1]}-${
@@ -117,7 +118,10 @@ export default function WorkshopForm() {
     };
 
     try {
-      const res = await axios.post("/generate/workshop-template", formData);
+      const res = await axios.post(
+        "/generate/iic-activity-report-template",
+        formData
+      );
       setFileUrl(res.data.fileUrl);
       toast.success("Report Generated Successfully!");
     } catch (error) {
@@ -129,7 +133,7 @@ export default function WorkshopForm() {
   return (
     <div className="max-w-4xl mx-auto p-8 bg-gradient-to-br from-indigo-50 to-purple-50 shadow-xl rounded-lg my-8">
       <h1 className="text-3xl font-bold text-indigo-800 mb-8 text-center">
-        Workshop Report Generator
+        IIC Activity Report Generator
       </h1>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
@@ -159,6 +163,7 @@ export default function WorkshopForm() {
               className="mt-1 block w-full rounded-md border-purple-200 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 p-2"
             />
           </div>
+
           <div>
             <label className="block text-sm font-medium text-indigo-700 mb-2">
               Date
@@ -192,7 +197,53 @@ export default function WorkshopForm() {
               />
             </div>
           </div>
+
+          <div>
+            <label className="block text-sm font-medium text-indigo-700 mb-2">
+              Theme
+            </label>
+            <input
+              type="text"
+              {...register("theme")}
+              placeholder="Enter theme"
+              required
+              className="mt-1 block w-full rounded-md border-purple-200 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 p-2"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-indigo-700 mb-2">
+              Level
+            </label>
+            <select
+              {...register("level")}
+              required
+              className="mt-1 block w-full rounded-md border-purple-200 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 p-2"
+            >
+              <option value="">Select Level</option>
+              <option value="1">Level 1</option>
+              <option value="2">Level 2</option>
+              <option value="3">Level 3</option>
+              <option value="4">Level 4</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-indigo-700 mb-2">
+              Mode
+            </label>
+            <select
+              {...register("mode")}
+              required
+              className="mt-1 block w-full rounded-md border-purple-200 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 p-2"
+            >
+              <option value="">Select Mode</option>
+              <option value="Online">Online</option>
+              <option value="Offline">Offline</option>
+            </select>
+          </div>
         </div>
+
         {/* Activity Details Section */}
         <div className="bg-white p-6 rounded-lg shadow-sm border border-purple-100">
           <h2 className="text-xl font-semibold text-indigo-800 mb-4">
@@ -457,4 +508,6 @@ export default function WorkshopForm() {
       )}
     </div>
   );
-}
+};
+
+export default IICActivityReport;
