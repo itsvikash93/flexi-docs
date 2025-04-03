@@ -177,7 +177,7 @@ module.exports.workshopGenerate = async (req, res) => {
     // Generate and save the output document
     // const outputPath = "./generated/workshop.docx";
 
-    const fileName = `workshop on entrepreneurship and innovation as career opportunity.docs`;
+    const fileName = `workshop_on_entrepreneurship_and_innovation_as_career_opportunity.docx`;
     const key = `generated/${fileName}`;
 
     // fs.writeFileSync(outputPath, output);
@@ -273,7 +273,60 @@ module.exports.iicActivityReportGenerate = async (req, res) => {
 
     const output = doc.getZip().generate({ type: "nodebuffer" });
 
-    const fileName = `IIC ACTVITY REPORT.docs`;
+    const fileName = `IIC_ACTVITY_REPORT.docx`;
+    const key = `generated/${fileName}`;
+
+    // Generate and save the output document
+    // const outputPath = `./generated/${fileName}`;
+    // fs.writeFileSync(outputPath, output);
+
+    const { fileUrl, uploadUrl } = await putObjectURL(
+      key,
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+    );
+
+    await axios.put(uploadUrl, output, {
+      headers: {
+        "Content-Type":
+          "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      },
+    });
+
+    res.status(200).send({ fileUrl });
+    // res.status(200).send("generated");
+  } catch (error) {
+    console.error("Error processing document:", error);
+    res.status(500).json({ error: "Document generation failed" });
+  }
+};
+
+module.exports.nspReportGenerate = async (req, res) => {
+  try {
+    // console.log(req.body);
+    // const templateFile = fs.readFileSync(
+    //   "./templates/NSP_III_Year_Guidelines_and_Report_Template.docx",
+    //   "binary"
+    // );
+
+    const template = await templateModel.findOne({
+      _id: "67ee97087637691e443be29a",
+    });
+
+    const response = await axios.get(template.fileUrl, {
+      responseType: "arraybuffer",
+    });
+    
+    const templateFile = response.data;
+
+    const zip = new PizZip(templateFile);
+
+    const doc = new Docxtemplater(zip);
+
+    doc.render(req.body);
+
+    const output = doc.getZip().generate({ type: "nodebuffer" });
+
+    const fileName = `NSP_III_Year_Guidelines_and_Report.docx`;
     const key = `generated/${fileName}`;
 
     // Generate and save the output document

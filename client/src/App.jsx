@@ -1,14 +1,12 @@
 import React from "react";
-import DynamicTableForm from "./components/DynamicTableForm";
-import DynamicBlock from "./components/DynamicBlock";
-import ImageComp from "./components/ImageComp";
-import UploadTemplate from "./components/UploadTemplate";
 import Routing from "./utils/Routing";
+import BackendConnection from "./components/BackendConnection";
 
 const App = () => {
   return (
     <div>
       <Routing />
+      <BackendConnection />
       {/* <DynamicTableForm /> */}
       {/* <DynamicBlock /> */}
       {/* <ImageComp /> */}

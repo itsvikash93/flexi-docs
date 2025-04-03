@@ -490,7 +490,7 @@ const IICActivityReport = () => {
           type="submit"
           className="w-full mt-6 py-3 px-6 bg-green-500 text-white rounded-md shadow-md hover:bg-green-600 focus:ring focus:ring-green-300 transition duration-200"
         >
-          Generate Workshop Report
+          Generate Report
         </button>
       </form>
 
