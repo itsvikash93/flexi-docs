@@ -4,9 +4,10 @@ import Home from '../components/Home'
 import DynamicBlock from '../components/DynamicBlock'
 import ImageComp from '../components/ImageComp'
 import UploadTemplate from '../components/UploadTemplate'
-import WorkshopForm from '../components/WorkshopForm'
-import IICActivityReport from '../components/IICActivityReport'
+// import WorkshopForm from '../components/IICActivityReportForm'
+// import IICActivityReport from '../components/IICActivityReport'
 import NSPReportForm from '../components/NSPReportForm'
+import IICActivityReportForm from '../components/IICActivityReportForm'
 
 const Routing = () => {
     return (
@@ -16,8 +17,8 @@ const Routing = () => {
             <Route path="/upload/template" element={<UploadTemplate />} />
             {/* <Route path="/" element={<WorkshopForm />} /> */}
             <Route path="/templates/dynamic-block" element={<DynamicBlock />} />
-            <Route path="/templates/workshop" element={<WorkshopForm />} />
-            <Route path="/templates/iic-activity-report" element={<IICActivityReport />} />
+            {/* <Route path="/templates/workshop" element={<WorkshopForm />} /> */}
+            <Route path="/templates/iic-activity-report" element={<IICActivityReportForm />} />
             <Route path="/templates/nsp-report" element={<NSPReportForm />} />
         </Routes>
     )

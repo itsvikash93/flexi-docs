@@ -3,7 +3,7 @@ import { useState } from "react";
 import axios from "../utils/axios";
 import { toast } from "react-toastify";
 
-export default function WorkshopForm() {
+export default function IICActivityReportForm() {
   const { register, handleSubmit, control } = useForm();
   const { fields, append, remove } = useFieldArray({
     name: "keyLearnings",
@@ -117,7 +117,10 @@ export default function WorkshopForm() {
     };
 
     try {
-      const res = await axios.post("/generate/workshop-template", formData);
+      const res = await axios.post(
+        "/generate/iic-activity-report-template",
+        formData
+      );
       setFileUrl(res.data.fileUrl);
       toast.success("Report Generated Successfully!");
     } catch (error) {
@@ -129,7 +132,7 @@ export default function WorkshopForm() {
   return (
     <div className="max-w-4xl mx-auto p-8 bg-gradient-to-br from-indigo-50 to-purple-50 shadow-xl rounded-lg my-8">
       <h1 className="text-3xl font-bold text-indigo-800 mb-8 text-center">
-        Workshop Report Generator
+        IIC Activity Report
       </h1>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">

@@ -9,7 +9,7 @@ const {
 const router = express.Router();
 
 router.post("/doc-template", docGenerate);
-router.post("/workshop-template", workshopGenerate);
+// router.post("/workshop-template", workshopGenerate);
 router.post("/iic-activity-report-template", iicActivityReportGenerate);
 router.post("/nsp-report-template", nspReportGenerate);
 router.post("/image-template", imgGenerate);
