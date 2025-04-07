@@ -111,7 +111,7 @@ module.exports.iicActivityReportGenerate = async (req, res) => {
     //   "binary"
     // );
     const template = await templateModel.findOne({
-      _id: "67f28521884aa5c328b7ccde",
+      _id: "67f427e4bc6fbb4601c19c6c",
     });
 
     const response = await axios.get(template.fileUrl, {
@@ -177,7 +177,7 @@ module.exports.iicActivityReportGenerate = async (req, res) => {
     // Generate and save the output document
     // const outputPath = "./generated/workshop.docx";
 
-    const fileName = "IIC_ACTVITY_REPORT.docx";
+    const fileName = "IIC_Activity_Report.docx";
     const key = `generated/${fileName}`;
 
     // fs.writeFileSync(outputPath, output);
@@ -202,103 +202,112 @@ module.exports.iicActivityReportGenerate = async (req, res) => {
   }
 };
 
-// module.exports.iicActivityReportGenerate = async (req, res) => {
-//   try {
-//     // console.log(req.body);
-//     // Load the template file
-//     // const templateFile = fs.readFileSync(
-//     //   "./templates/IIC ACTVITY REPORT TEMPLATE.docx",
-//     //   "binary"
-//     // );
-//     const template = await templateModel.findOne({
-//       _id: "67b81575fb1f95f8bd2ed881",
-//     });
+module.exports.departmentalActivityReportGenerate = async (req, res) => {
+  try {
+    // console.log(req.body);
+    // Load the template file
+    // const templateFile = fs.readFileSync(
+    //   "./templates/Departmental_Activity_Report_template.docx",
+    //   "binary"
+    // );
+    const template = await templateModel.findOne({
+      _id: "67f42861bc6fbb4601c19c77",
+    });
+    const response = await axios.get(template.fileUrl, {
+      responseType: "arraybuffer",
+    });
+    const templateFile = response.data;
 
-//     const response = await axios.get(template.fileUrl, {
-//       responseType: "arraybuffer",
-//     });
-//     const templateFile = response.data;
+    const zip = new PizZip(templateFile);
 
-//     const zip = new PizZip(templateFile);
+    // Image processing options
+    const imageOpts = {
+      centered: true,
+      fileType: "docx",
+      getImage: (tagValue) =>
+        Buffer.from(tagValue.replace(/^data:image\/\w+;base64,/, ""), "base64"),
+      getSize: (tagName) => {
+        if (tagName.includes("poster")) {
+          return [600, 400];
+        } // Half-page
+        if (tagName.includes("attendance")) return [800, 1000]; // Full-page
+        if (tagName.includes("glimpse")) return [250, 150]; // Two per row
+        return [500, 400]; // Default fallback
+      },
+    };
 
-//     // Image processing options
-//     const imageOpts = {
-//       centered: true,
-//       fileType: "docx",
-//       getImage: (tagValue) =>
-//         Buffer.from(tagValue.replace(/^data:image\/\w+;base64,/, ""), "base64"),
-//       getSize: (tagName) => {
-//         if (tagName.includes("poster")) {
-//           return [600, 400];
-//         } // Half-page
-//         if (tagName.includes("attendance")) return [800, 1000]; // Full-page
-//         if (tagName.includes("glimpse")) return [250, 150]; // Two per row
-//         return [500, 400]; // Default fallback
-//       },
-//     };
+    const doc = new Docxtemplater(zip, {
+      modules: [new imageModule(imageOpts)],
+    });
 
-//     const doc = new Docxtemplater(zip, {
-//       modules: [new imageModule(imageOpts)],
-//     });
+    // console.log(req.body);
+    let { poster, glimpses, attendances, feedbacks } = req.body;
 
-//     // console.log(req.body);
-//     let { poster, glimpses, attendances } = req.body;
+    // Ensure poster is correctly formatted
+    poster = await getImageData(poster);
 
-//     // Ensure poster is correctly formatted
-//     poster = await getImageData(poster);
+    // Process glimpses (grouping into pairs for rows)
+    const glimpseImgs = [];
+    for (let i = 0; i < glimpses.length; i++) {
+      glimpseImgs.push({
+        glimpseImg: await getImageData(glimpses[i]),
+      });
+    }
 
-//     // Process glimpses (grouping into pairs for rows)
-//     const glimpseImgs = [];
-//     for (let i = 0; i < glimpses.length; i++) {
-//       glimpseImgs.push({
-//         glimpseImg: await getImageData(glimpses[i]),
-//       });
-//     }
+    // Process attendances
+    const attendanceImgs = [];
+    for (let i = 0; i < attendances.length; i++) {
+      attendanceImgs.push({
+        attendanceImg: await getImageData(attendances[i]),
+      });
+    }
+    // Process feedbacks
+    const feedbackImgs = [];
+    for (let i = 0; i < feedbacks.length; i++) {
+      feedbackImgs.push({
+        feedbackImg: await getImageData(feedbacks[i]),
+      });
+    }
 
-//     // Process attendances
-//     const attendanceImgs = [];
-//     for (let i = 0; i < attendances.length; i++) {
-//       attendanceImgs.push({
-//         attendanceImg: await getImageData(attendances[i]),
-//       });
-//     }
+    // console.log({ Feedbacks: feedbackImgs });
 
-//     // Render the document with updated data
-//     doc.render({
-//       ...req.body,
-//       poster: poster, // Poster image
-//       glimpses: glimpseImgs, // Glimpses in rows
-//       attendances: attendanceImgs, // Attendance images
-//     });
+    // Render the document with updated data
+    doc.render({
+      ...req.body,
+      poster: poster, // Poster image
+      glimpses: glimpseImgs, // Glimpses in rows
+      attendances: attendanceImgs,
+      feedbacks: feedbackImgs, // Attendance images
+    });
 
-//     const output = doc.getZip().generate({ type: "nodebuffer" });
+    const output = doc.getZip().generate({ type: "nodebuffer" });
 
-//     const fileName = `IIC_ACTVITY_REPORT.docx`;
-//     const key = `generated/${fileName}`;
+    const fileName = "Departmental_Activity_Report.docx";
+    const key = `generated/${fileName}`;
 
-//     // Generate and save the output document
-//     // const outputPath = `./generated/${fileName}`;
-//     // fs.writeFileSync(outputPath, output);
+    // Generate and save the output document
+    // const outputPath = `./generated/${fileName}`;
+    // fs.writeFileSync(outputPath, output);
 
-//     const { fileUrl, uploadUrl } = await putObjectURL(
-//       key,
-//       "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-//     );
+    const { fileUrl, uploadUrl } = await putObjectURL(
+      key,
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+    );
 
-//     await axios.put(uploadUrl, output, {
-//       headers: {
-//         "Content-Type":
-//           "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-//       },
-//     });
+    await axios.put(uploadUrl, output, {
+      headers: {
+        "Content-Type":
+          "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      },
+    });
 
-//     res.status(200).send({ fileUrl });
-//     // res.status(200).send("generated");
-//   } catch (error) {
-//     console.error("Error processing document:", error);
-//     res.status(500).json({ error: "Document generation failed" });
-//   }
-// };
+    res.status(200).send({ fileUrl });
+    // res.status(200).send("generated");
+  } catch (error) {
+    console.error("Error processing document:", error);
+    res.status(500).json({ error: "Document generation failed" });
+  }
+};
 
 module.exports.nspReportGenerate = async (req, res) => {
   try {
@@ -309,7 +318,7 @@ module.exports.nspReportGenerate = async (req, res) => {
     // );
 
     const template = await templateModel.findOne({
-      _id: "67ee97087637691e443be29a",
+      _id: "67f428cbbc6fbb4601c19c7e",
     });
 
     const response = await axios.get(template.fileUrl, {

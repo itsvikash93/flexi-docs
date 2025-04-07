@@ -3,7 +3,7 @@ import { useState } from "react";
 import axios from "../utils/axios";
 import { toast } from "react-toastify";
 
-export default function IICActivityReportForm() {
+const IICActivityReportForm = () => {
   const { register, handleSubmit, control } = useForm();
   const { fields, append, remove } = useFieldArray({
     name: "keyLearnings",
@@ -440,9 +440,9 @@ export default function IICActivityReportForm() {
         {/* Submit Button */}
         <button
           type="submit"
-          className="w-full mt-6 py-3 px-6 bg-green-500 text-white rounded-md shadow-md hover:bg-green-600 focus:ring focus:ring-green-300 transition duration-200"
+          className="w-full mt-6 py-3 px-6 bg-green-500 text-white rounded-md shadow-md hover:bg-green-600 focus:ring focus:ring-green-300 transition duration-200 uppercase font-semibold"
         >
-          Generate Workshop Report
+          Generate Report
         </button>
       </form>
 
@@ -460,4 +460,6 @@ export default function IICActivityReportForm() {
       )}
     </div>
   );
-}
+};
+
+export default IICActivityReportForm;

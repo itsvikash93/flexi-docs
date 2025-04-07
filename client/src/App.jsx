@@ -7,10 +7,6 @@ const App = () => {
     <div>
       <Routing />
       <BackendConnection />
-      {/* <DynamicTableForm /> */}
-      {/* <DynamicBlock /> */}
-      {/* <ImageComp /> */}
-      {/* <UploadTemplate /> */}
     </div>
   );
 };
