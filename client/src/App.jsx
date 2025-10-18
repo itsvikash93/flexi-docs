@@ -6,7 +6,7 @@ const App = () => {
   return (
     <div>
       <Routing />
-      <BackendConnection />
+      {/* <BackendConnection /> */}
     </div>
   );
 };
