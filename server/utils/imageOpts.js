@@ -1,6 +1,5 @@
 const { imageSize } = require("image-size");
 
-// Image options for docxtemplater
 module.exports.imageOpts = {
   centered: true,
   fileType: "docx",
@@ -12,7 +11,7 @@ module.exports.imageOpts = {
         "base64"
       );
     }
-    return tagValue; // if already buffer
+    return tagValue;
   },
 
   getSize: (tagValue, tagName) => {
@@ -25,25 +24,41 @@ module.exports.imageOpts = {
             )
           : tagValue;
 
-      const dimensions = imageSize(buffer);
-      let { width, height } = dimensions;
+      // Dimensions from the actual image
+      const { width: originalWidth, height: originalHeight } = imageSize(buffer);
+      let width = originalWidth;
+      let height = originalHeight;
 
-      // default max size
+      // Default size (for any unmatched tags)
       let maxWidth = 500;
       let maxHeight = 400;
 
+      // Poster (medium size)
       if (tagName.includes("poster")) {
         maxWidth = 600;
         maxHeight = 400;
-      } else if (tagName.includes("attendance")) {
+      }
+      // Attendance / Feedback Analysis / Participant List (multiple tall images)
+      else if (
+        tagName.includes("attendance") ||
+        tagName.includes("feedback") ||
+        tagName.includes("participant")
+      ) {
         maxWidth = 800;
         maxHeight = 1000;
-      } else if (tagName.includes("glimpse")) {
+      }
+      // Glimpses (small thumbnails)
+      else if (tagName.includes("glimpse")) {
         maxWidth = 250;
         maxHeight = 150;
       }
+      // Notice (almost full page!)
+      else if (tagName.includes("notice")) {
+        maxWidth = 600; // Usable A4 width inside margins
+        maxHeight = 900; // Almost full page height
+      }
 
-      // maintain aspect ratio
+      // Maintain aspect ratio - no crop, no stretch
       const ratio = Math.min(maxWidth / width, maxHeight / height);
       width = width * ratio;
       height = height * ratio;
