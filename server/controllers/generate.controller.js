@@ -1,12 +1,20 @@
 const axios = require("axios");
+
 const templateModel = require("../models/template.model");
 const PizZip = require("pizzip");
+const path = require("path");
 const fs = require("fs");
+const fsExtra = require("fs-extra");
 const { putObjectURL } = require("../config/aws-setup");
 const Docxtemplater = require("docxtemplater");
 const imageModule = require("docxtemplater-image-module-free");
 const { v4: uuidv4 } = require("uuid");
-const { getImageData } = require("../utils/getImageData");
+
+const { getImageBase64 } = require("../utils/getImageData");
+
+const { imageSize } = require("image-size");
+const { imageOpts } = require("../utils/imageOpts");
+// const { getImageData } = require("../utils/getImageData");
 
 module.exports.docGenerate = async (req, res) => {
   const template = await templateModel.findOne({
@@ -361,3 +369,139 @@ module.exports.nspReportGenerate = async (req, res) => {
     res.status(500).json({ error: "Document generation failed" });
   }
 };
+
+// Helper function to get image as base64
+
+module.exports.testingController = async (req, res) => {
+  const uploadedImagesDir = path.join(__dirname, "../uploads/images");
+  try {
+    // console.log(req.body);
+    // console.log(req.files);
+
+    // ✅ Get uploaded files from multer
+    const posterFile = req.files.poster ? req.files.poster[0] : null;
+    const noticeFile = req.files.notice ? req.files.notice[0] : null;
+    const qSheetFile = req.files.qSheet ? req.files.qSheet[0] : null;
+    const glimpseFiles = req.files.glimpses || [];
+    const attendanceFiles = req.files.attendances || [];
+    // const participantFiles = req.files.participants || [];
+    const feedbackFiles = req.files.feedbackAnalysis || [];
+
+    if (!posterFile) {
+      return res.status(400).json({ error: "Poster image is required" });
+    }
+
+    // Template path (uploaded earlier)
+    const templatePath = path.join(
+      __dirname,
+      "../uploads/templates/sample-report.docx"
+    );
+    const templateFile = fs.readFileSync(templatePath, "binary");
+    const zip = new PizZip(templateFile);
+
+    const doc = new Docxtemplater(zip, {
+      modules: [new imageModule(imageOpts)],
+    });
+
+    // ✅ Convert images → base64
+    const poster = getImageBase64(posterFile.path);
+    const qSheet = getImageBase64(qSheetFile.path);
+    const notice = getImageBase64(noticeFile.path);
+
+    const glimpseImgs = glimpseFiles.map((f) => ({
+      glimpseImg: getImageBase64(f.path),
+    }));
+
+    const attendanceImgs = attendanceFiles.map((f) => ({
+      attendanceImg: getImageBase64(f.path),
+    }));
+    // const participantImgs = participantFiles.map((f) => ({
+    //   participantImg: getImageBase64(f.path),
+    // }));
+    const feedbackAnalysisImgs = feedbackFiles.map((f) => ({
+      feedbackImg: getImageBase64(f.path),
+    }));
+
+    // ✅ Render document
+    doc.render({
+      ...req.body,
+      poster,
+      qSheet,
+      glimpses: glimpseImgs,
+      attendances: attendanceImgs,
+      // participants: participantImgs,
+      feedbackAnalysis: feedbackAnalysisImgs,
+      notice,
+    });
+
+    const buf = doc.getZip().generate({ type: "nodebuffer" });
+
+    // const outputDir = path.join(__dirname, "../uploads/generated");
+    const outputDir = "E:FlexiDocs-Generated-Reports";
+    if (!fs.existsSync(outputDir)) fs.mkdirSync(outputDir, { recursive: true });
+
+    const outputPath = path.join(outputDir, `Sample_Report_${Date.now()}.docx`);
+
+    fsExtra.writeFileSync(outputPath, buf);
+
+    res.status(200).json({
+      message: "Document generated successfully!",
+      filePath: outputPath,
+    });
+  } catch (error) {
+    console.error("Error processing document:", error);
+    res.status(500).json({ error: "Document generation failed" });
+  } finally {
+    // ✅ Always clean up uploaded images folder (even if error occurs)
+    try {
+      if (fs.existsSync(uploadedImagesDir)) {
+        fsExtra.emptyDirSync(uploadedImagesDir);
+        console.log("🧹 Uploaded images folder cleaned successfully!");
+      }
+    } catch (cleanupErr) {
+      console.error("Error cleaning uploaded folder:", cleanupErr);
+    }
+  }
+};
+// module.exports.testingController = async (req, res) => {
+//   try {
+//     // console.log(req.body);
+//     // Load the template file
+//     const templateFile = fs.readFileSync(
+//       "./templates/testing-template.docx",
+//       "binary"
+//     );
+
+//     const zip = new PizZip(templateFile);
+
+//     const doc = new Docxtemplater(zip, {
+//       paragraphLoop: true, // To support loops in paragraphs
+//       linebreaks: true, // To support line breaks
+//     });
+
+//     console.log(req.body);
+
+//     // Render the document with updated data
+//     doc.render({
+//       ...req.body,
+//     });
+
+//     // Generate the final Word file
+//     const output = doc.getZip().generate({ type: "nodebuffer" });
+
+//     // Generate and save the output document
+//     const fileName = "testing.docx";
+
+//     const outputPath = `./generated/${fileName}`;
+
+//     // const key = `generated/${fileName}`;
+
+//     fs.writeFileSync(outputPath, output);
+
+//     res.status(200).send("Ho gya Jiii!");
+//     // res.status(200).send("generated");
+//   } catch (error) {
+//     console.error("Error processing document:", error);
+//     res.status(500).json({ error: "Document generation failed" });
+//   }
+// };

@@ -1,9 +1,12 @@
 const express = require("express");
 const app = express();
+const multer = require("multer");
+
 const cors = require("cors");
 // const { getObjectURL, putObjectURL } = require("./config/aws-setup");
 const path = require("path");
 
+const upload = multer();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -19,7 +22,7 @@ const connectToDB = require("./config/mongodb");
 const uploadsRouter = require("./routes/uploads.routes");
 const generateRouter = require("./routes/generate.routes");
 
-connectToDB();
+// connectToDB();
 app.get("/", (req, res) => {
   res.send("FlexiDocs API is running!");
 });

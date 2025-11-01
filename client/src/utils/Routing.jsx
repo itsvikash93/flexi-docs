@@ -9,6 +9,7 @@ import UploadTemplate from "../components/UploadTemplate";
 import NSPReportForm from "../components/NSPReportForm";
 import IICActivityReportForm from "../components/IICActivityReportForm";
 import DepartmentalActivityForm from "../components/DepartmentalActivityForm";
+import TestingIIC from "../components/TestingIIC";
 
 const Routing = () => {
   return (
@@ -25,6 +26,10 @@ const Routing = () => {
       <Route
         path="/templates/iic-activity-report"
         element={<IICActivityReportForm />}
+      />
+      <Route
+        path="/templates/sample-report"
+        element={<TestingIIC />}
       />
       <Route path="/templates/nsp-report" element={<NSPReportForm />} />
     </Routes>
